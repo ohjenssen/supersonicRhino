@@ -2,13 +2,30 @@
 
 :root {
     --customBlack: #1a1b1d;
+    --primaryColor: #00B0BD;
+    --marginElementsSmall: 4px 0px;
 }
 
 html {
     font-family: "Montserrat", sans-serif  !important;
+    font-size: 12px;
     color: white !important;
+    background-color: var(--customBlack);
 }
 
 body {
-    background-color: var(--customBlack);
+    margin: 0px;
+    padding: 0px;
+    display: flex;
+    justify-content: center;
+}
+
+section {
+    width: 100%;
+    max-width: 350px;
+}
+
+a {
+    color: white;
+    text-decoration: none;
 }

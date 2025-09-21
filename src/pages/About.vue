@@ -2,9 +2,11 @@
 </script>
 
 <template>
-    <h1>About</h1>
-    <router-link to="/">Home</router-link>
-    <router-link to="/about">About</router-link>
+    <section>
+        <h1>About</h1>
+        <router-link to="/">Home</router-link>
+        <router-link to="/about">About</router-link>
+    </section>
 </template>
 
 <style scoped>
