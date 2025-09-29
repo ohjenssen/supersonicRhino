@@ -2,7 +2,8 @@
 import { onMounted, ref } from 'vue';
     let weight = '';
     let repetitions = '';
-    const sets = JSON.parse(localStorage.getItem("squat") ?? "");
+    const sets = JSON.parse(localStorage.getItem("squat") ?? "[]");
+    console.log(sets);
 
     function handleSubmit(event: Event) {
         const form = event.target as HTMLFormElement;
@@ -51,8 +52,10 @@ import { onMounted, ref } from 'vue';
     const lastWorkoutSets = ref<any[]>([]);
 
     onMounted(() => {
-        const lastDate = getMostRecentDate(sets);
-        lastWorkoutSets.value = getLastWorkout(sets, lastDate);
+        if(sets){
+            const lastDate = getMostRecentDate(sets);
+            lastWorkoutSets.value = getLastWorkout(sets, lastDate);
+        }
     })
 </script>
 
