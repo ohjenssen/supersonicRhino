@@ -1,20 +1,20 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
     let weight = '';
     let repetitions = '';
-    const exercises = JSON.parse(localStorage.getItem("exercises") ?? "");
-    console.log(exercises);
+    const sets = JSON.parse(localStorage.getItem("squat") ?? "");
 
     function handleSubmit(event: Event) {
         const form = event.target as HTMLFormElement;
         const formdata = new FormData(form);
         const info = Object.fromEntries(formdata.entries());
 
-        // Add current date in dd/mm/yyyy format
+        // Add current date in yyyy/mm/dd format
         const today = new Date();
-        const dd = String(today.getDate()).padStart(2, '0');
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
         const yyyy = today.getFullYear();
-        info.date = `${dd}/${mm}/${yyyy}`;
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        info.date = `${yyyy}/${mm}/${dd}`;
 
         const key = form.getAttribute("name") ?? "";
         const exerciseString = localStorage.getItem(key);
@@ -29,29 +29,50 @@
 
         localStorage.setItem(key, JSON.stringify(exerciseData));
     }
+
+    function parseDate(dateStr: string): Date {
+        const [yyyy, mm, dd] = dateStr.split('/');
+        return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    }
+
+    function getMostRecentDate(sets: any[]): string {
+        if (!sets.length) return '';
+        const dates = sets.map(set => set.date);
+        const mostRecent = dates.reduce((latest, date) => {
+            return parseDate(date) > parseDate(latest) ? date : latest;
+        }, dates[0]);
+        return mostRecent;
+    }
+
+    function getLastWorkout(sets: any[], lastDate: string) {
+        return sets.filter(set => set.date === lastDate);
+    }
+
+    const lastWorkoutSets = ref<any[]>([]);
+
+    onMounted(() => {
+        const lastDate = getMostRecentDate(sets);
+        lastWorkoutSets.value = getLastWorkout(sets, lastDate);
+    })
 </script>
 
 <template>
     <div>
         <h2>Squat</h2>
-        <table>
-            <tr>
-                <th>Last workout</th>
-                <th>Today</th>
-            </tr>
-            <tr>
-                <td>10 reps - 100kg</td>
-                <td>10 reps - 102.5kg</td>
-            </tr>
-            <tr>
-                <td>8 reps - 102.5kg</td>
-                <td>10 reps - 105kg</td>
-            </tr>
-            <tr>
-                <td>4 reps - 102.5kg</td>
-                <td>8 reps - 107.5kg</td>
-            </tr>
-        </table>
+
+        <div class="table">
+            <div class="table-row">
+                <h2>Last workout</h2>
+
+                <div class="table-data" v-for="set in lastWorkoutSets">
+                    <p>{{ set.weight }} kg</p>
+                    <p>{{ set.repetitions }} reps</p>
+                </div>
+            </div>
+            <div class="table-row">
+                <h2>Today</h2>
+            </div>
+        </div>
 
         <form id="registration" name="squat" @submit.prevent="handleSubmit">
             <div class="input-container">
@@ -72,23 +93,19 @@
 </template>
 
 <style scoped>
-    table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-        margin: var(--marginElementsSmall);
+
+    .table {
+        display: flex;
+        justify-content: space-between;
     }
 
-    td, th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-        font-size: 12px;
+    .table-data {
+        display: flex;
+        justify-content: space-between;
     }
-    
-    tr:nth-child(even) {
-        background-color: #dddddd;
-        color: black;
+
+    h2 {
+        font-size: 12px;
     }
 
     #registration {
