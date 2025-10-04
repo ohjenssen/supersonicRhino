@@ -3,6 +3,7 @@
 :root {
     --customBlack: #1a1b1d;
     --primaryColor: #00B0BD;
+    --primaryColorHover: #008c96;
     --marginElementsSmall: 4px 0px;
 }
 
@@ -22,10 +23,18 @@ body {
 
 section {
     width: 100%;
-    max-width: 350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 a {
     color: white;
     text-decoration: none;
+}
+
+#app {
+    width: 100%;
+    margin: 0px 8px;
 }

@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+    import { onMounted, ref } from 'vue';
     let weight = '';
     let repetitions = '';
     const sets = JSON.parse(localStorage.getItem("squat") ?? "[]");
-    console.log(sets);
+    const lastWorkoutSets = ref<any[]>([]);
+    const todaysWorkoutSets = ref<any[]>([]);
+
+    function getTodaysDate(){
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        return `${yyyy}/${mm}/${dd}`;
+    }
 
     function handleSubmit(event: Event) {
         const form = event.target as HTMLFormElement;
         const formdata = new FormData(form);
         const info = Object.fromEntries(formdata.entries());
-
-        // Add current date in yyyy/mm/dd format
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const dd = String(today.getDate()).padStart(2, '0');
-        info.date = `${yyyy}/${mm}/${dd}`;
+        info.date = getTodaysDate();
 
         const key = form.getAttribute("name") ?? "";
         const exerciseString = localStorage.getItem(key);
@@ -27,7 +30,7 @@ import { onMounted, ref } from 'vue';
         }
 
         exerciseData.push(info); // add new submission
-
+        todaysWorkoutSets.value.push(info);
         localStorage.setItem(key, JSON.stringify(exerciseData));
     }
 
@@ -38,6 +41,7 @@ import { onMounted, ref } from 'vue';
 
     function getMostRecentDate(sets: any[]): string {
         if (!sets.length) return '';
+
         const dates = sets.map(set => set.date);
         const mostRecent = dates.reduce((latest, date) => {
             return parseDate(date) > parseDate(latest) ? date : latest;
@@ -49,24 +53,43 @@ import { onMounted, ref } from 'vue';
         return sets.filter(set => set.date === lastDate);
     }
 
-    const lastWorkoutSets = ref<any[]>([]);
+    function getSecondMostRecentDate(sets: any[]): string {
+        if (sets.length < 2) return '';
+        
+        const uniqueDates = [...new Set(sets.map(set => set.date))]; // Get unique dates
+        const sortedDates = uniqueDates.sort((a, b) => parseDate(b).getTime() - parseDate(a).getTime());
+        
+        return sortedDates[1] || ''; // Return second most recent date
+    }
 
     onMounted(() => {
-        if(sets){
-            const lastDate = getMostRecentDate(sets);
-            lastWorkoutSets.value = getLastWorkout(sets, lastDate);
+        if(sets.length > 0){
+            const today = getTodaysDate();
+            const mostRecentDate = getMostRecentDate(sets);
+            
+            // Get today's workout (if any)
+            todaysWorkoutSets.value = getLastWorkout(sets, today);
+            
+            // Get last workout (not today)
+            if (today === mostRecentDate) {
+                // If we worked out today, get the workout before today
+                const secondMostRecentDate = getSecondMostRecentDate(sets);
+                lastWorkoutSets.value = getLastWorkout(sets, secondMostRecentDate);
+            } else {
+                // If we haven't worked out today, get the most recent workout
+                lastWorkoutSets.value = getLastWorkout(sets, mostRecentDate);
+            }
         }
     })
 </script>
 
 <template>
-    <div>
+    <div id="exercise">
         <h2>Squat</h2>
 
         <div class="table">
             <div class="table-row">
                 <h2>Last workout</h2>
-
                 <div class="table-data" v-for="set in lastWorkoutSets">
                     <p>{{ set.weight }} kg</p>
                     <p>{{ set.repetitions }} reps</p>
@@ -74,6 +97,10 @@ import { onMounted, ref } from 'vue';
             </div>
             <div class="table-row">
                 <h2>Today</h2>
+                <div class="table-data" v-for="set in todaysWorkoutSets">
+                    <p>{{ set.weight }} kg</p>
+                    <p>{{ set.repetitions }} reps</p>
+                </div>
             </div>
         </div>
 
@@ -89,13 +116,17 @@ import { onMounted, ref } from 'vue';
                     <input class="exercise-input" id="repetitions" name="repetitions" type="number" v-model="repetitions"></input>
                 </div>
             </div>
-
             <button class="submit-btn" type="submit">Add</button>
         </form>
     </div>
 </template>
 
 <style scoped>
+
+    #exercise {
+        width: 100%;
+        max-width: 350px;
+    }
 
     .table {
         display: flex;
@@ -118,6 +149,7 @@ import { onMounted, ref } from 'vue';
     .input-container {
         margin: var(--marginElementsSmall);
         display: flex;
+        justify-content: space-between;
     }
 
     .single-input-container {
@@ -129,10 +161,18 @@ import { onMounted, ref } from 'vue';
         width: 100px;
     }
 
-    .submit-btn {
+    #registration .submit-btn {
         width: 100%;
         background-color: var(--primaryColor);
         border: 1px solid var(--primaryColor);
         margin: var(--marginElementsSmall);
+        padding: 10px;
+        cursor: pointer;
+        color: white;
     }
+
+    #registration .submit-btn:hover {
+    background-color: blue;
+    border-color: red;
+}
 </style>
