@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Exercise from '@/components/Exercise.vue';
 import Squat from '@/components/Squat.vue';
 
 
@@ -9,8 +10,8 @@ import Squat from '@/components/Squat.vue';
         <h1>Home</h1>
         <router-link to="/">Home</router-link>
         <router-link to="/about">About</router-link>
-
-        <Squat />
+        <Exercise />
+        <!-- <Squat /> -->
     </section>
 </template>
 
