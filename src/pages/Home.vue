@@ -1,7 +1,19 @@
 <script setup lang="ts">
-import Exercise from '@/components/Exercise.vue';
-import Squat from '@/components/Squat.vue';
+import { onMounted, ref } from 'vue';
 
+let exercises = ref([]);
+
+const fetchData = async () => {
+        // const response = await fetch('https://supersonicrhinoapi.onrender.com/api/exercises');
+        const response = await fetch('http://localhost:8080/api/exercises');
+        const data = await response.json();
+        exercises.value = data;
+}
+
+onMounted(() => {
+
+    fetchData();
+})
 
 </script>
 
@@ -10,8 +22,11 @@ import Squat from '@/components/Squat.vue';
         <h1>Home</h1>
         <router-link to="/">Home</router-link>
         <router-link to="/about">About</router-link>
-        <Exercise />
-        <!-- <Squat /> -->
+        
+        
+        <div v-for="exercise in exercises">
+            {{ exercise.exerciseName }}
+        </div>
     </section>
 </template>
 
