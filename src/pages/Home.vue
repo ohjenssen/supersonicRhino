@@ -1,33 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
+import WorkoutSets from '@/components/WorkoutSets.vue';
 
-let exercises = ref([]);
 
-const fetchData = async () => {
-        // const response = await fetch('https://supersonicrhinoapi.onrender.com/api/exercises');
-        const response = await fetch('http://localhost:8080/api/exercises');
-        const data = await response.json();
-        exercises.value = data;
-}
 
-onMounted(() => {
-
-    fetchData();
+onMounted(async () => {
 })
 
 </script>
 
 <template>
     <section>
-        <h1>Home</h1>
-        <router-link to="/">Home</router-link>
-        <router-link to="/about">About</router-link>
-        
-        
-        <div v-for="exercise in exercises">
-            {{ exercise.exerciseName }}
-        </div>
+        <h1>Home</h1>        
     </section>
+    <WorkoutSets />
+    
 </template>
 
 <style scoped>

@@ -9,6 +9,7 @@ const router = createRouter({
       path: '/', 
       component: Home,
       children: [
+
       ]
     },
     { path: '/about', component: About },
