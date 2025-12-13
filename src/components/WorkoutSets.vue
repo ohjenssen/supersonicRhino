@@ -8,6 +8,7 @@ import WorkoutSetsForm from './WorkoutSetsForm.vue';
 import type { Set, Exercise } from '@/types';
 import { formatDate } from '@/utils/formatDate';
 import { isToday } from '@/utils/isToday';
+import Wheel from './Wheel.vue';
 
 // https://www.freecodecamp.org/news/how-event-handling-works-in-vue-3-guide-for-devs/
 // https://medium.com/@weberzt/how-to-create-a-random-id-in-javascript-e92b39fedaef
@@ -91,6 +92,7 @@ onMounted(async () => {
 
         </div>
         <WorkoutSetsForm :exercises="exercises" @exerciseChanged="handleExerciseChange" @createdSet="handleCreatedSet"/>
+        <!-- <Wheel /> -->
     </section>
 </template>
 
