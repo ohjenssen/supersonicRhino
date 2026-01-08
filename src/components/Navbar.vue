@@ -2,6 +2,8 @@
 import { useRoute } from 'vue-router';
 import HomeIcon from './icons/HomeIcon.vue';
 import HomeIconFill from './icons/HomeIconFill.vue';
+import WorkoutIcon from './icons/WorkoutIcon.vue';
+import WorkoutIconFill from './icons/WorkoutIconFill.vue';
 import InfoIcon from './icons/InfoIcon.vue';
 import InfoIconFill from './icons/InfoIconFill.vue';
 const route = useRoute();
@@ -14,6 +16,12 @@ const route = useRoute();
                 <router-link to="/">
                     <HomeIconFill v-if="route.path === '/'"/>
                     <HomeIcon v-else/>
+                </router-link>
+            </div>
+            <div class="link-container">
+                <router-link to="/workout">
+                    <WorkoutIconFill v-if="route.path === '/workout'" />
+                    <WorkoutIcon  v-else />
                 </router-link>
             </div>
             <div class="link-container">
