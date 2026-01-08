@@ -1,10 +1,9 @@
-<script setup lang="ts">
+<script setup>
 </script>
 
 <template>
-    <section>
-        <h1>About</h1>
-    </section>
+    <h1>About</h1>
+    
 </template>
 
 <style scoped>

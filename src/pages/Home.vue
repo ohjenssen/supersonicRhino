@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
 import WorkoutSets from '@/components/WorkoutSets.vue';
-
-
-
-onMounted(async () => {
-})
 
 </script>
 
