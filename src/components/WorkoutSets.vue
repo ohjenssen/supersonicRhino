@@ -3,12 +3,14 @@ import { onMounted, ref, computed } from 'vue';
 import { readExercises } from '@/utils/CRUD/readExercises';
 import { readSetsByExercise } from '@/utils/CRUD/readSetsByExercise';
 import { deleteSet } from '@/utils/CRUD/deleteSet';
-import Trash from './icons/Trash.vue';
 import WorkoutSetsForm from './WorkoutSetsForm.vue';
-import type { Set, Exercise } from '@/types';
 import { formatDate } from '@/utils/formatDate';
 import { isToday } from '@/utils/isToday';
-import Wheel from './Wheel.vue';
+import type { Set, Exercise } from '@/types';
+import DeleteModalTrigger from './modal/DeleteModalTrigger.vue';
+import DeleteModal from './modal/DeleteModal.vue';
+import SetModalTrigger from './modal/SetModalTrigger.vue';
+import SetModal from './modal/SetModal.vue';
 
 // https://www.freecodecamp.org/news/how-event-handling-works-in-vue-3-guide-for-devs/
 // https://medium.com/@weberzt/how-to-create-a-random-id-in-javascript-e92b39fedaef
@@ -21,8 +23,21 @@ let newSet = ref({
     weight: 0,
     repetitions: 0,
     exerciseID: 1,
-    userID: 1,
+    userID: 1
 })
+
+
+let showDeleteModal = ref(false);
+let showUpdateModal = ref(false);
+
+let setIdToDelete = ref(0);
+let setToUpdate = ref({
+    weight: 0,
+    repetitions: 0,
+    exerciseID: 1,
+    userID: 1,
+    setID: 0,
+});
 
 // In the two functions below, its basically !isToday vs isToday based on allSets.value
 // I put todaysSets and lasWorkoutSets in a computed property because... 
@@ -60,11 +75,30 @@ const handleCreatedSet = async (set: Set) => {
     allSets.value.unshift(set); // Unshift isntead of push because shift adds it to end of the array
 }
 
-const handleDeleteSet = async (setID: number) => {
-    await deleteSet(setID);
+const handleDeleteSet = async () => {
+    handleDeleteModal(setIdToDelete.value);
+    await deleteSet(setIdToDelete.value);
     allSets.value = await readSetsByExercise(newSet.value.exerciseID);
 }
 
+const handleDeleteModal = async (setID: number) => {
+    setIdToDelete.value = setID;
+    showDeleteModal.value = !showDeleteModal.value;
+}
+
+const handleUpdateModal = async (set: Set) => {
+    setToUpdate.value = set;
+    showUpdateModal.value = !showUpdateModal.value;
+}
+
+const handleConfirmUpdate = async () => {
+    showUpdateModal.value = false;
+    allSets.value = await readSetsByExercise(setToUpdate.value.exerciseID);
+}
+
+const handleCancelUpdate = () => {
+    showUpdateModal.value = false;
+}
 
 onMounted(async () => {
     exercises.value = await readExercises();
@@ -79,21 +113,28 @@ onMounted(async () => {
             <div class="sets-container">
                 <h2>Last time:</h2>
                 <p v-if="lastWorkoutSets.length === 0">No previous workout</p>
-                <p v-for="set, index in lastWorkoutSets" :key="set.setID">Set {{ index + 1 }} -   {{ set.repetitions }} reps - {{ set.weight }}kg</p>
+                <div class="single-set-container" v-for="set, index in lastWorkoutSets">
+                    <div class="set-display">
+                        <SetModalTrigger :set="set" :setNumber="index" />
+                    </div>
+                </div>
             </div>
 
             <div class="sets-container">
                 <h2>Today</h2>
                 <div class="single-set-container" v-for="set, index in todaysSets" :key="set.setID">
-                    <p>Set {{ index + 1 }} -   {{ set.repetitions }} reps - {{ set.weight }}kg</p>
-                    <button class="delete-btn" @click="handleDeleteSet(set.setID)"><Trash /></button>
+                    <div class="set-display">
+                        <SetModalTrigger :set="set" :setNumber="index" @triggerUpdateModal="handleUpdateModal(set)"/>
+                    </div>
+                     <DeleteModalTrigger @triggerModal="handleDeleteModal(set.setID)"/>
                 </div>
             </div>
 
         </div>
         <WorkoutSetsForm :exercises="exercises" @exerciseChanged="handleExerciseChange" @createdSet="handleCreatedSet"/>
-        <!-- <Wheel /> -->
     </section>
+    <SetModal :showUpdateModal="showUpdateModal" :set="setToUpdate" @confirmUpdate="handleConfirmUpdate" @cancelUpdate="handleCancelUpdate"/>
+    <DeleteModal :showDeleteModal="showDeleteModal" @confirmDelete="handleDeleteSet()" @cancelDelete="handleDeleteModal(0)"/>
 </template>
 
 <style scoped>
@@ -107,26 +148,37 @@ onMounted(async () => {
         justify-content: space-between;
         width: 100%;
         max-width: 350px;
-        min-height: 200px;
+        min-height: 250px;
+        background-color: rgba(2, 135, 22, 0.5);
+        backdrop-filter: blur(10px);
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
+        border-radius: 30px;
+    }
+
+    .sets-container {
+        padding: 30px 15px 10px 15px;
     }
 
     .single-set-container {
         display: flex;
-        align-items: center;
+        align-items: end;
         justify-content: space-between;
-        width: 160px;
+        width: 120px;
     }
 
-    .delete-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        width: 18px;
+    .set-display {
+        margin-top: 8px;
     }
 
-    .delete-btn svg {
-        width: 100%;
-        height: 100%;
-        fill: white;
+    .set-count {
+        padding: 0px;
+        margin: 0px;
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .set {
+        padding: 0px;
+        margin: 0px;
     }
 </style>
