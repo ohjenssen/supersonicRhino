@@ -2,6 +2,7 @@
     import { ref } from 'vue';
     import { createSet } from '@/utils/CRUD/createSet';
     import type { Set } from '@/types';
+    import Wheel from './Wheel.vue';
 
     // Define what props this component receives from parent
     interface Props {
@@ -55,11 +56,25 @@
                 <label for="weight">weight</label>
                 <input name="weight" type="number" v-model="newSet.weight" />
             </div>
-        <button type="submit">Submit</button>
+            <!-- <Wheel /> -->
+        <button type="submit" class="add-exercise-btn">Submit</button>
     </form>
+    <!-- <Wheel /> -->
 </template>
 
-<style scoped>
+<style >
+    .add-exercise-btn {
+        background-color: var(--primaryColor);
+        border: 1px solid var(--primaryColor);
+        border-radius: 16px;
+        padding: 16px 8px;
+    }
+
+    .add-exercise-btn:hover {
+        background-color: var(--primaryColorHover);
+        border: 1px solid var(--primaryColorHover);
+        transition: 0.3s;
+    }
     .setForm {
         display: flex;
         flex-direction: column;
@@ -67,6 +82,7 @@
         justify-content: space-between;
         width: 100%;
         max-width: 350px;
+        margin-top: 16px;
     }
     
     .input-container {
