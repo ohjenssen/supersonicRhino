@@ -24,7 +24,7 @@ const carouselItems = Array.from({ length: 99 }, (_, i) => ({ num: i + 1 }))
 const rotation = ref(0)
 const startAngle = ref(0)
 const isDown = ref(false)
-const radius = 450 // Distance from center
+const radius = 300 // Distance from center
 const carouselCenter = ref({ x: 0, y: 0 })
 
 const speedWheel = 0.5
@@ -69,8 +69,10 @@ const getItemStyle = (index) => {
   const zIndex = Math.round(1000 - distanceFromTarget)
   
   // Calculate scale based on distance from target (closer = larger)
+  // Using exponential falloff for more dramatic size difference
   const maxDistance = radius * 2
-  const scale = 0.6 + (1 - distanceFromTarget / maxDistance) * 0.6
+  const normalizedDistance = distanceFromTarget / maxDistance
+  const scale = 0.0 + Math.pow(1 - normalizedDistance, 3) * 1.0
   
   // Calculate opacity based on distance
   const opacity = 0.4 + (1 - distanceFromTarget / maxDistance) * 0.6
@@ -195,13 +197,17 @@ onBeforeUnmount(() => {
 
 .carousel {
   position: absolute;
-  width: 950px;
-  height: 950px;
+  /* width: 300px;
+  height: 300px; */
+  width: 0px;
+  height: 0px;
   display: flex;
   justify-content: center;
   align-items: center;
-  right: -75%;
-  bottom: -75%;
+  right: 0%;
+  bottom: 0%;
+  /* left: 50%;
+  bottom: 50%; */
   pointer-events: all;
 }
 
