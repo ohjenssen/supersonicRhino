@@ -2,7 +2,7 @@
     import { ref } from 'vue';
     import { createSet } from '@/utils/CRUD/createSet';
     import type { Set } from '@/types';
-    import Wheel from './Wheel.vue';
+    import NumberPicker from './NumberPicker.vue';
 
     // Define what props this component receives from parent
     interface Props {
@@ -38,6 +38,10 @@
     const handleExerciseChange = () => {
         emit('exerciseChanged', newSet.value.exerciseID); // Send the exerciseID
     }
+
+    const test = () => {
+        // console.log(newSet.weight);
+    }
 </script>
 
 <template>
@@ -48,15 +52,16 @@
                     <option v-for="exercise in exercises" :value="exercise.exerciseID">{{ exercise.exerciseName }}</option>
                 </select>
             </div>
-            <div class="input-container">
-                <label for="repetitions">Repetitions</label>
-                <input name="repetitions" type="number" v-model="newSet.repetitions" />
+            <div class="numbered-input-container">
+                <div class="number-input-container">
+                    <label for="repetitions">Repetitions</label>
+                    <NumberPicker v-model="newSet.repetitions" min:="0" :max="300"/>
+                </div>
+                <div class="number-input-container">
+                    <label for="weight">Weight</label>
+                    <NumberPicker v-model="newSet.weight" min:="0" :max="300"/>
+                </div>
             </div>
-            <div class="input-container">
-                <label for="weight">weight</label>
-                <input name="weight" type="number" v-model="newSet.weight" />
-            </div>
-            <!-- <Wheel /> -->
         <button type="submit" class="add-exercise-btn">Submit</button>
     </form>
     <!-- <Wheel /> -->
@@ -88,5 +93,18 @@
     .input-container {
         display: flex;
         flex-direction: column;
+    }
+
+    .numbered-input-container {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        margin: 16px 0px;
+    }
+
+    .number-input-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 </style>
