@@ -26,6 +26,7 @@ let newSet = ref({
     userID: 1
 })
 
+let currentExercise = ref(1);
 
 let showDeleteModal = ref(false);
 let showUpdateModal = ref(false);
@@ -69,6 +70,7 @@ const lastWorkoutSets = computed(() => {
 
 const handleExerciseChange = async (exerciseID: number) => {
     allSets.value = await readSetsByExercise(exerciseID);
+    currentExercise.value = await exerciseID;
 }
 
 const handleCreatedSet = async (set: Set) => {
@@ -78,7 +80,9 @@ const handleCreatedSet = async (set: Set) => {
 const handleDeleteSet = async () => {
     handleDeleteModal(setIdToDelete.value);
     await deleteSet(setIdToDelete.value);
-    allSets.value = await readSetsByExercise(newSet.value.exerciseID);
+    console.log('set id to delete: ', setIdToDelete.value);
+    console.log('newset.value.exerciseID: ', currentExercise);
+    allSets.value = await readSetsByExercise(currentExercise.value);
 }
 
 const handleDeleteModal = async (setID: number) => {

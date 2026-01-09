@@ -3,6 +3,7 @@
     import { createSet } from '@/utils/CRUD/createSet';
     import type { Set } from '@/types';
     import NumberPicker from './NumberPicker.vue';
+    import DropdownMenu from './DropdownMenu.vue';
 
     // Define what props this component receives from parent
     interface Props {
@@ -35,36 +36,30 @@
         }
     }
 
-    const handleExerciseChange = () => {
-        emit('exerciseChanged', newSet.value.exerciseID); // Send the exerciseID
-    }
-
-    const test = () => {
-        // console.log(newSet.weight);
+    const handleExerciseChange = (exerciseID: number) => {
+        emit('exerciseChanged', exerciseID)
     }
 </script>
 
 <template>
     <form @submit.prevent="handleCreateSet" class="setForm">
             <div class="input-container">
-                <label for="exercises">Exercise</label>
-                <select name="exercises" id="exercises" v-model="newSet.exerciseID" @change="handleExerciseChange">
-                    <option v-for="exercise in exercises" :value="exercise.exerciseID">{{ exercise.exerciseName }}</option>
-                </select>
+                <!-- <label for="exercises" class="input-label">Exercise</label> -->
+                <DropdownMenu v-model="newSet.exerciseID" :exercises="exercises" @update:modelValue="handleExerciseChange"/>
             </div>
             <div class="numbered-input-container">
                 <div class="number-input-container">
-                    <label for="repetitions">Repetitions</label>
+                    <label for="repetitions" class="input-label">Repetitions</label>
                     <NumberPicker v-model="newSet.repetitions" min:="0" :max="300"/>
                 </div>
                 <div class="number-input-container">
-                    <label for="weight">Weight</label>
+                    <label for="weight" class="input-label">Weight</label>
                     <NumberPicker v-model="newSet.weight" min:="0" :max="300"/>
                 </div>
             </div>
         <button type="submit" class="add-exercise-btn">Submit</button>
     </form>
-    <!-- <Wheel /> -->
+
 </template>
 
 <style >
@@ -106,5 +101,14 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+    }
+
+    .input-label {
+        margin-bottom: 8px;
+    }
+
+    #exercises {
+        background-color: var(--primaryColor);
+        border: 1px solid var(--primaryColor);
     }
 </style>
