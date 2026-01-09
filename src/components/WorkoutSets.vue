@@ -149,7 +149,7 @@ onMounted(async () => {
         width: 100%;
         max-width: 350px;
         min-height: 250px;
-        background-color: rgba(2, 135, 22, 0.5);
+        background-color: var(--primaryColorTransparent);
         backdrop-filter: blur(10px);
         box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
         border-radius: 30px;
