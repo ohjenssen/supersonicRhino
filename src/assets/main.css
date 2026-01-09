@@ -2,8 +2,8 @@
 
 :root {
     --customBlack: #1a1b1d;
-    --primaryColor: #00B0BD;
-    --primaryColorHover: #008c96;
+    --primaryColor: rgb(1, 72, 12);
+    --primaryColorTransparent: rgba(2, 135, 22, 0.5); 
     --marginElementsSmall: 4px 0px;
 }
 
@@ -37,4 +37,16 @@ a {
 #app {
     width: 100%;
     margin: 0px 8px;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.justify-content-space-between {
+    justify-content: space-between;
 }
