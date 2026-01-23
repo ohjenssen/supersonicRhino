@@ -68,6 +68,7 @@
         border: 1px solid var(--primaryColor);
         border-radius: 16px;
         padding: 16px 8px;
+        color: white;
     }
 
     .add-exercise-btn:hover {
